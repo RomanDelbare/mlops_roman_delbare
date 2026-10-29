@@ -218,3 +218,11 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+# MLflow
+mlruns/
+mlartifacts/
+mlflow.db
+
+# Données générées par le code
+data/processed/
