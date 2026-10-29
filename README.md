@@ -32,11 +32,33 @@ Dans ce cadre les métriques d'évaluations des performances du modèle que nous
 - Exited: Indique si le client a quitté la banque (notre variable cible).
 
 ## Installation
-compatible avec python 3.12.10 :
+**Prérequis** : Python 3.12 (développé et testé avec Python 3.12.10) et Git.
 
-python -m venv .venv
-.venv\Scripts\Activate.ps1
+### 1. Cloner le dépôt
+```bash
+git clone https://github.com/RomanDelbare/mlops_roman_delbare.git
+cd mlops_roman_delbare
+```
+
+### 2. Créer et activer l'environnement virtuel
+**Windows (PowerShell)**
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+**Linux / macOS**
+```bash
+python3.12 -m venv .venv
+source .venv/bin/activate
+```
+
+### 3. Installer les dépendances
+```bash
+python -m pip install --upgrade pip
 pip install -r envi_dev.txt
+```
+
+(Pour une exécution seule, sans les outils de développement faire : `pip install -r requirements.txt`).
 
 ## État d'avancement
 RAF : EDA + Feature eng + Modélisation + Evaluations des perfs
