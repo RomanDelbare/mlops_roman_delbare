@@ -9,3 +9,19 @@ requires-python = ">=3.12"
 
 [tool.setuptools]
 packages = ["base_commune"]
+
+# ruff : vérification du style et des erreurs courantes (ruff check .)
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F : erreurs de base, I : ordre des imports, UP : syntaxe Python moderne
+select = ["E", "F", "I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Lignes longues tolérées dans les notebooks (graphiques, tableaux)
+"*.ipynb" = ["E501"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
