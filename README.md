@@ -56,9 +56,10 @@ source .venv/bin/activate
 ```bash
 python -m pip install --upgrade pip
 pip install -r envi_dev.txt
+pip install -e .
 ```
 
-(Pour une exécution seule, sans les outils de développement faire : `pip install -r requirements.txt`).
+(Pour une exécution seule, sans les outils de développement faire : `pip install -r requirements.txt` et "pip install -e .").
 
 ## État d'avancement
 RAF : EDA + Feature eng + Modélisation + Evaluations des perfs
