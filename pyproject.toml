@@ -1,0 +1,23 @@
+[project]
+name = "mlops-churn-bancaire"
+version = "0.1.0"
+requires-python = ">=3.12"
+
+# ruff : vérification du style et des erreurs courantes (lancer : ruff check .)
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/F : erreurs de base, I : ordre des imports, UP : syntaxe Python moderne
+select = ["E", "F", "I", "UP"]
+
+[tool.ruff.lint.per-file-ignores]
+# Les notebooks contiennent souvent des lignes longues (graphiques, tableaux)
+"*.ipynb" = ["E501"]
+
+# pytest : la racine du dépôt est ajoutée au chemin pour pouvoir écrire
+# « from src.donnees import ... » dans les tests
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
