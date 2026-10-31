@@ -6,7 +6,8 @@ Projet réalisé dans le cadre du cours de MLOps en M2 SIAD Data sciences. Notre
 
 L'objectif de ce projet est donc de construire un modèle, en appliquant les bonnes pratiques du MLOps, capable de prédire si oui ou non un client va quitter la banque. Nous travaillerons donc ici à la construction d'un classifieur binaire. 
 Comme souvent avec les problématiques de churn, nous avons un déséquilibre au niveau de la variable à expliquer : le churn n'est observé que pour 20% du dataset. 
-Dans ce cadre les métriques d'évaluation des performances du modèle que nous allons juger seront principalement l'accuracy, le recall, la précision, le F1-score, l'AUC et le PR-AUC. 
+Ici la métrique de performance qu'on va principalement juger est le PR-AUC. En effet comme on est sur une problématique de churn on peut avoir un relativement bon AUC 'classique", un bon accuracy etc même si on rate quasi tout les churners. Avec le PR-AUC comme métrique à optimiser principalement on va méchaniquement se concentrer sur la détection des churners et donc orienter le modèle dans le bon sens. 
+Nous conserverons néanmoins l'AUC "standard" (cad issu de la courbe ROC classique), le rappel, la précision et le F1-score comme métriques complémentaires afin d'obtenir une évaluation plus complète des performances.
 
 ## Données
 - **Source** : https://www.kaggle.com/datasets/saurabhbadole/bank-customer-churn-prediction-dataset 
