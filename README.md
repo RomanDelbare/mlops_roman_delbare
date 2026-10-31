@@ -1,12 +1,12 @@
 # Prédiction du churn bancaire
 
-Projet réalisé dans le cadre du cours de MLOps en M2 SIAD Data sciences. Notre objectif est ici de prédire le churn bancaire en développant un projet qui respecte les bonnes pratiques du MLOps. Les consignes précisants explicitement que c'est principalement ce second point que ce projet évalue et moins la qualité/originalité de la modélisation, nous travaillerons ici sur une variante d'une problématique assez connu en DS : la modélisation d'un churn, ici dans le secteur bancaire. 
+Projet réalisé dans le cadre du cours de MLOps en M2 SIAD Data sciences. Notre objectif est ici de prédire le churn bancaire en développant un projet qui respecte les bonnes pratiques du MLOps. Les consignes précisant explicitement que c'est principalement ce second point que ce projet évalue et moins la qualité/originalité de la modélisation, nous travaillerons ici sur une variante d'une problématique assez connue en DS : la modélisation d'un churn, ici dans le secteur bancaire. 
 
 ## Objectif
 
 L'objectif de ce projet est donc de construire un modèle, en appliquant les bonnes pratiques du MLOps, capable de prédire si oui ou non un client va quitter la banque. Nous travaillerons donc ici à la construction d'un classifieur binaire. 
-Comme souvent avec les problématiques de churn, nous avons un désequilibre au niveau de la variable à expliquer : le churn n'est observé que pour 20% du dataset. 
-Dans ce cadre les métriques d'évaluations des performances du modèle que nous allons juger seront principalement l'accuracy, le recall, la précision, le F1-score, l'AUC et le PR-AUC. 
+Comme souvent avec les problématiques de churn, nous avons un déséquilibre au niveau de la variable à expliquer : le churn n'est observé que pour 20% du dataset. 
+Dans ce cadre les métriques d'évaluation des performances du modèle que nous allons juger seront principalement l'accuracy, le recall, la précision, le F1-score, l'AUC et le PR-AUC. 
 
 ## Données
 - **Source** : https://www.kaggle.com/datasets/saurabhbadole/bank-customer-churn-prediction-dataset 
@@ -59,7 +59,36 @@ pip install -r envi_dev.txt
 pip install -e .
 ```
 
-(Pour une exécution seule, sans les outils de développement faire : `pip install -r requirements.txt` et "pip install -e .").
+(Pour une exécution seule, sans les outils de développement, faire : `pip install -r requirements.txt` et `pip install -e .`).
+
+## Structure du dépôt
+```
+data/raw/                    données brutes (non modifiées)
+base_commune/outils.py       fonctions communes : chargement, découpage, évaluation, suivi MLflow
+base_commune/utilisation.md  explication de la base commune et exemple d'utilisation
+notebooks/                   un notebook par analyse ou par modèle
+tests/                       tests automatiques (pytest)
+reports/                     résumés des runs MLflow en CSV
+```
+
+## Suivi des expériences
+Les runs sont enregistrés avec MLflow dans `mlflow.db` (non versionné). Pour les consulter, depuis la racine du projet :
+```bash
+mlflow ui --backend-store-uri sqlite:///mlflow.db
+```
+
+## Vérifications
+```bash
+ruff check .   # style du code
+pytest         # tests
+```
+Ces deux commandes tournent aussi automatiquement sur GitHub à chaque pull request.
+
+Avant de commiter un notebook, on vide ses sorties :
+```bash
+jupyter nbconvert --clear-output --inplace notebooks/mon_notebook.ipynb
+```
 
 ## État d'avancement
-RAF : EDA + Feature eng + Modélisation + Evaluations des perfs
+- Fait : EDA, base commune (chargement, découpage, évaluation, suivi MLflow), tests et intégration continue
+- Reste à faire : feature engineering, modélisation, évaluation des performances

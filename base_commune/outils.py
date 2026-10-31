@@ -7,6 +7,7 @@ from pathlib import Path
 import mlflow
 import pandas as pd
 from sklearn.model_selection import StratifiedKFold, cross_validate, train_test_split
+from sklearn.metrics import accuracy_score, average_precision_score, f1_score, precision_score, recall_score, roc_auc_score
 
 RANDOM_STATE = 42 # Pour qu'on utilise tjr la meme graine 
 TARGET = "Exited" # Pour l'évaluation 
@@ -39,6 +40,25 @@ def evaluer_modele(modele, X_train, y_train, n_splits: int = 5) -> dict:
         metriques[f"cv_{nom}_std"] = float(res[f"test_{nom}"].std())
         metriques[f"train_{nom}_mean"] = float(res[f"train_{nom}"].mean())
     return metriques # Automatise/uniformise le scoring de la perf des modèles pour qu'on ai au moins une base tjr comparable sur les différents modèles. 
+
+
+def evaluer_test(modele, X_train, y_train, X_test, y_test, seuil: float = 0.5) -> dict:
+    """Entraîne le modèle sur tout le train et le score sur le test.
+
+    À utiliser une seule fois, sur le modèle retenu à la fin. Les métriques qui
+    dépendent d'un seuil (f1, précision, recall, accuracy) utilisent le seuil donné.
+    """
+    modele.fit(X_train, y_train)
+    proba = modele.predict_proba(X_test)[:, 1]
+    pred = (proba >= seuil).astype(int)
+    return {
+        "test_pr_auc": float(average_precision_score(y_test, proba)),
+        "test_roc_auc": float(roc_auc_score(y_test, proba)),
+        "test_f1": float(f1_score(y_test, pred)),
+        "test_precision": float(precision_score(y_test, pred, zero_division=0)),
+        "test_recall": float(recall_score(y_test, pred)),
+        "test_accuracy": float(accuracy_score(y_test, pred)),
+    }
 
 
 def configurer_mlflow(nom_experience: str) -> None: # Config MLFlow en partie generé avec IA comme on est débutants dessus 
