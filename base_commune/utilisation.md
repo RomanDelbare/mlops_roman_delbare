@@ -45,7 +45,8 @@ Faire :
 "X_train, X_test, y_train, y_test = decouper_donnees(df)"
 
 ### `evaluer_modele(modele, X_train, y_train, n_splits=5)`
-Évalue un modèle (ou un `Pipeline` scikit-learn) par validation croisée stratifiée(5 plis, `shuffle=True`, `random_state=42`) sur le jeu d'entraînement uniquement.
+Évalue un `Pipeline` scikit-learn (prétraitement + modèle) par validation croisée stratifiée(5 plis, `shuffle=True`, `random_state=42`) sur le jeu d'entraînement uniquement.
+- Geography et Gender sont en texte : un modèle seul plante, il faut que l'encodage soit dans le Pipeline (comme ça il est refait dans chaque pli, sans fuite).
 - Retourne un dictionnaire de 18 métriques : pour chacune de `pr_auc`, `roc_auc`, `f1`, `precision`, `recall`, `accuracy`, les clés `cv_<métrique>_mean` `cv_<métrique>_std` (moyenne et écart-type sur les plis) et `train_<métrique>_mean` (score sur les données d'entraînement).
 
 Faire: 
