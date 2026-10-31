@@ -1,0 +1,3 @@
+# Les CSV sont gardés tels quels (sans conversion des fins de ligne),
+# pour que l'empreinte data_md5 soit la même sous Windows et sous Linux
+*.csv -text
