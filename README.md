@@ -91,5 +91,5 @@ jupyter nbconvert --clear-output --inplace notebooks/mon_notebook.ipynb
 ```
 
 ## État d'avancement
-- Fait : EDA, base commune (chargement, découpage, évaluation, suivi MLflow), tests et intégration continue
-- Reste à faire : feature engineering, modélisation, évaluation des performances
+- Fait : EDA, base commune (chargement, découpage, évaluation, suivi MLflow), tests et intégration continue, exploration et comparaison des perfs de 5 modèles sur notre sujet (KNN, RF, SVM, regression logitique et XGBoost)
+- Reste à faire : Optimisation du modèle retenu (XGBoost), pipeline de pré-traitement, ajouter des tests sur le modèle, fusionner nos 2 csv MLFlow
