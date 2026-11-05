@@ -3,14 +3,14 @@
 import mlflow
 import numpy as np
 import pytest
+
+from base_commune.outils import TARGET
 from modele_final.entrainement_final import (
     choisir_seuil_f1_max,
     entrainer,
     mesurer_au_seuil,
     verifier_strategie_seuil,
 )
-
-from base_commune.outils import TARGET
 from modele_final.prepa_donnees import charger_parametres
 
 
