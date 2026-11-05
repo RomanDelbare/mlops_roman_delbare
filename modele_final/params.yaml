@@ -1,0 +1,32 @@
+# pr rester propres on stock les paras du modele ici + nos bornes de verif pr les vals en entrée
+variables:
+  numeriques: [CreditScore, Age, Tenure, Balance, NumOfProducts, EstimatedSalary, HasCrCard, IsActiveMember]
+  categorielles: [Geography, Gender]
+
+# Hyperparas du XGBoost (cf les notebooks d'explo pr voir pk on grde ca )
+modele:
+  n_estimators: 300
+  max_depth: 3
+  learning_rate: 0.05
+  scale_pos_weight: 1
+
+validation_croisee:
+  nombre_de_plis: 5
+
+# rappel on prend ici le seuil qui maximise le f1, pareil voir le notebook de recherche du meilleur suil pr voir pk
+seuil:
+  strategie: f1_max
+
+# pr controler la qualité des données en entrée :
+controles_qualite:
+  modalites_autorisees:   # modalités présentes dans le jeu d'entraînement
+    Geography: [France, Germany, Spain]
+    Gender: [Female, Male]
+  bornes:                 
+    Age: {min: 0, max: 120}
+    EstimatedSalary: {min: 0}
+    NumOfProducts: {max: 4}
+
+mlflow:
+  nom_experience: churn_bancaire
+  nom_du_modele: churn_xgboost
