@@ -43,18 +43,6 @@ def test_une_strategie_de_seuil_inconnue_est_refusee():
         verifier_strategie_seuil(parametres)
 
 
-@pytest.fixture
-def mlflow_temporaire(tmp_path, monkeypatch):
-# Redirige MLflow vers un dossier temporaire pour ne pas polluer la vraie base
-# (suggestion de l'ia je n'y aurai honnêtement pas pensé)
-    ancienne_adresse = mlflow.get_tracking_uri()
-    adresse_de_test = f"sqlite:///{(tmp_path / 'mlflow_test.db').as_posix()}"
-    monkeypatch.setattr("base_commune.outils.MLFLOW_TRACKING_URI", adresse_de_test)
-    monkeypatch.setattr("base_commune.outils.MLFLOW_ARTIFACTS", tmp_path / "artefacts")
-    yield
-    mlflow.set_tracking_uri(ancienne_adresse)
-
-
 def test_l_entrainement_complet_enregistre_un_modele_utilisable(
     mlflow_temporaire, parametres, clients_fictifs
 ):

@@ -65,11 +65,28 @@ pip install -e .
 ## Structure du dépôt
 ```
 data/raw/                    données brutes (non modifiées)
+data/train/, data/test/      découpage train/test exporté en CSV (identique à decouper_donnees)
 base_commune/outils.py       fonctions communes : chargement, découpage, évaluation, suivi MLflow
 base_commune/utilisation.md  explication de la base commune et exemple d'utilisation
-notebooks/                   un notebook par analyse ou par modèle
+notebooks/                   EDA, comparaison des modèles et choix du seuil de décision
+modele_final/                modèle retenu : paramètres, préparation des données, entraînement, prédiction
 tests/                       tests automatiques (pytest)
 reports/                     résumés des runs MLflow en CSV
+```
+
+## Modèle final
+Le modèle retenu est un XGBoost (300 arbres de profondeur 3, taux d'apprentissage de 0,05) avec un seuil de décision de 0,3, choisi pour maximiser le F1. Ses paramètres sont dans `modele_final/params.yaml`.
+
+Pour l'entraîner, l'évaluer sur le jeu de test et l'enregistrer dans MLflow, depuis la racine du projet :
+```bash
+python -m modele_final.entrainement_final
+```
+
+Pour prédire, on passe par `modele_final.prediction` plutôt que par le `predict()` du modèle, qui coupe à 0,5 au lieu de notre seuil :
+```python
+from modele_final.prediction import predire_clients
+
+predictions = predire_clients(nouveaux_clients)  # 1 = le client part, 0 = il reste
 ```
 
 ## Suivi des expériences
@@ -91,5 +108,5 @@ jupyter nbconvert --clear-output --inplace notebooks/mon_notebook.ipynb
 ```
 
 ## État d'avancement
-- Fait : EDA, base commune (chargement, découpage, évaluation, suivi MLflow), tests et intégration continue, exploration et comparaison des perfs de 5 modèles sur notre sujet (KNN, RF, SVM, regression logitique et XGBoost)
-- Reste à faire : Optimisation du modèle retenu (XGBoost), pipeline de pré-traitement, ajouter des tests sur le modèle, fusionner nos 2 csv MLFlow
+- Fait : EDA, base commune (chargement, découpage, évaluation, suivi MLflow), tests et intégration continue, exploration et comparaison de 5 modèles (KNN, Random Forest, SVM, régression logistique et XGBoost), choix du seuil de décision, préparation des données, entraînement et prédiction du modèle final
+- Reste à faire : fusionner nos 2 CSV de suivi MLflow
