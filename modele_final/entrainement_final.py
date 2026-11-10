@@ -5,7 +5,7 @@ Ici on va contrôler les données + validation croisee et choix du seuil de déc
 Après : entraînement final + évaluation sur le test .
 On va enregistrer le modèle final dans MLflow .
 
-lancement en fisant python -m modele_final.entrainement
+lancement en faisant python -m modele_final.entrainement_final
 """
 
 import mlflow
