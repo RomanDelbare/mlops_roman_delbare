@@ -6,6 +6,7 @@ dans entrainement_final.py (max du F1), donc pour prédire on passe par ici.
 
 import mlflow
 from mlflow import MlflowClient
+from mlflow.exceptions import MlflowException
 
 from base_commune.outils import configurer_mlflow
 from modele_final.entrainement_final import ALIAS_DU_MODELE_RETENU
@@ -24,11 +25,18 @@ def charger_modele_final(parametres=None):
     nom_du_modele = parametres["mlflow"]["nom_du_modele"]
     configurer_mlflow(parametres["mlflow"]["nom_experience"])
 
+    try:
+        version = MlflowClient().get_model_version_by_alias(
+            nom_du_modele, ALIAS_DU_MODELE_RETENU
+        )
+    except MlflowException as erreur:
+        raise RuntimeError(
+            f"Aucun modèle '{nom_du_modele}' avec l'alias "
+            f"'{ALIAS_DU_MODELE_RETENU}' : lancez d'abord l'entraînement "
+            "(python -m modele_final.entrainement_final)."
+        ) from erreur
     adresse = f"models:/{nom_du_modele}@{ALIAS_DU_MODELE_RETENU}"
     modele = mlflow.sklearn.load_model(adresse)
-    version = MlflowClient().get_model_version_by_alias(
-        nom_du_modele, ALIAS_DU_MODELE_RETENU
-    )
     seuil = float(mlflow.get_run(version.run_id).data.params["decision_threshold"])
     return modele, seuil
 
