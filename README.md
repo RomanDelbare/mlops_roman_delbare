@@ -1,6 +1,6 @@
 # Prédiction du churn bancaire
 
-Projet réalisé dans le cadre du cours de MLOps en M2 SIAD Data sciences. Notre objectif est ici de prédire le churn bancaire en développant un projet qui respecte les bonnes pratiques du MLOps et en essayant de faire un bon tracking MLFlow. Les consignes précisant explicitement que c'est principalement ce second point que ce projet évalue et moins la qualité/originalité de la modélisation, nous travaillerons ici sur une variante d'une problématique assez connue en DS : la modélisation d'un churn, ici dans le secteur bancaire, pour ne pas complexifier inutilement les choses. 
+L'objectif est ici de construire un modèle en développant un projet qui respecte les bonnes pratiques du MLOps, avec tracking MLFlow et processus d'intégration continue dans le cadre de notre cours de MLOps en M2 SIAD DS. Les consignes précisant explicitement que c'est principalement l'aspect MLOps que ce projet évalue et moins la qualité/originalité de la modélisation, nous travaillerons ici sur une variante d'une problématique assez connue en DS : la modélisation d'un churn.
 
 ## Objectif
 
@@ -37,33 +37,58 @@ Nous conserverons néanmoins l'AUC "standard" (cad issu de la courbe ROC classiq
 ## Installation
 **Prérequis** : Python 3.12 (développé et testé avec Python 3.12.10) et Git.
 
-### 1. Cloner le dépôt
+### 1. Cloner le dépôt :
+
 ```bash
 git clone https://github.com/RomanDelbare/mlops_roman_delbare.git
 cd mlops_roman_delbare
 ```
 
-### 2. Créer et activer l'environnement virtuel
-**Windows (PowerShell)**
-```powershell
+### 2. Créer l'environnement virtuel (une seule fois) :
+
+**Windows (PowerShell ou Git Bash)**
+```bash
 py -3.12 -m venv .venv
-.\.venv\Scripts\Activate.ps1
 ```
+
 **Linux / macOS**
 ```bash
 python3.12 -m venv .venv
+```
+
+### 3. Activer l'environnement (à refaire dans chaque nouveau terminal) :
+
+**Windows, PowerShell**
+```powershell
+.\.venv\Scripts\Activate.ps1
+```
+Si PowerShell refuse avec une erreur de « politique d'exécution », lancer d'abord
+`Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass` (valable pour la fenêtre en cours).
+
+**Windows, Git Bash**
+```bash
+source .venv/Scripts/activate
+```
+**Linux / macOS**
+```bash
 source .venv/bin/activate
 ```
 
-### 3. Installer les dépendances
+### 4. Installer les dépendances :
+
 ```bash
 python -m pip install --upgrade pip
 pip install -r envi_dev.txt
 pip install -e .
 ```
+(Pour une exécution seule, sans les outils de développement : `pip install -r requirements.txt` puis `pip install -e .`.)
 
-(Pour une exécution seule, sans les outils de développement, faire : `pip install -r requirements.txt` et `pip install -e .`).
+### 5. Vérifier l'installation
 
+```bash
+python -m ruff check .       # style du code : doit afficher « All checks passed! »
+python -m pytest tests -q    # tests : environ une minute
+```
 ## Structure du dépôt
 ```
 .github/workflows/    intégration continue (ruff et pytest)
@@ -80,7 +105,7 @@ reports/              suivi MLflow en CSV (un fichier par auteur + une synthèse
 Le modèle retenu est un XGBoost (300 arbres de profondeur 3, taux d'apprentissage de 0,05)
 avec un seuil de décision de 0,30, choisi pour maximiser le F1. Ses paramètres sont dans
 `modele_final/params.yaml`. 
-Le choix du modèle est justifié dans `notebooks/comparaison_modeles/choix_du_modele.md`.
+Le choix du modèle est justifié dans `notebooks/comparaison_modeles/04_choix_du_modele.md`.
 
 ### Entraîner
 ```bash
@@ -116,22 +141,40 @@ départs avec une précision d'environ trois fois le taux de base (20 %). Le ré
 de l'estimation hors pli, ce qui indique que le seuil se généralise bien. 
 
 ## Suivi des expériences
-Tous les essais sont enregistrés dans MLflow, sous `churn_bancaire`, dans
-`mlflow.db` et pour le modèle final, le modèle lui-même (signature, exemple d'entrée). 
-Pour les consulter, depuis la racine du projet :
+Tous les essais sont suivis avec MLflow (experience `churn_bancaire`) : paramètres, métriques de
+validation croisée etc... Pour le modèle final, le modèle lui-même (signature, exemple d'entrée) 
+est inscrit dans le registre.
+
+La base MLflow (`mlflow.db`) est locale et n'est pas versionnée. Après un clone, elle ne contient
+donc que l'essai du modèle final, créé par `python -m modele_final.entrainement_final`. Les essais
+d'exploration (KNN, Random Forest, SVM, régression logistique, XGBoost) sont conservés dans
+`reports/` : un fichier CSV par auteur (`runs_<auteur>.csv`) et une synthèse fusionnée.
+
+Pourr consulter la base locale, depuis la racine du projet :
 
 ```bash
-mlflow ui --backend-store-uri sqlite:///mlflow.db
+python -m mlflow ui --backend-store-uri sqlite:///mlflow.db
 ```
-
-Comme `mlflow.db` n'est pas dans le dépôt, on à un fichier csv de suivi par auteur. 
-Pour remmette tt ça au propre on fusionne le tout avec :
+puis ouvrir http://127.0.0.1:5000 
 
 ```bash
 python -m base_commune.fusion_rapports   # écrit reports/synthese_runs.csv
+
 ```
 
+## Organisation du travail
+- Une branche par fonctionnalité ; aucun commit direct sur `main` (branche protégée).
+- Chaque modification passe par une pull request, relue et approuvée par l'autre auteur, avec la
+  CI (ruff et pytest) exécutée sur chaque PR, puis fusionnée en « squash ».
+- Les tests couvrent le chargement des données, le prétraitement, l'entraînement, la prédiction
+  et la fusion des rapports de suivi.
+
+
 ## Vérifications
+
+Nous avons mis en place des tests (unitaires et d'intégration) et une verif ruff pour respecter 
+une convention de style de code que nous avons définis entre nous
+
 ```bash
 ruff check .   # style du code
 pytest         # tests
@@ -139,6 +182,7 @@ pytest         # tests
 Ces deux commandes tournent aussi automatiquement sur GitHub à chaque pull request.
 
 Avant de commiter un notebook, on vide ses sorties :
+
 ```bash
 jupyter nbconvert --clear-output --inplace notebooks/mon_notebook.ipynb
 ```
